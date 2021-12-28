@@ -1,0 +1,200 @@
+<html lang="en"><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport">
+  <meta name="description" content="Koncolle pop pop pop">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Koncolle">
+  <meta property="og:url" content="https://poptsai.click/">
+  <meta property="og:description" content="Wide-Mouthed Koncolle">
+  <meta property="og:image" content="http://i2.hdslb.com/bfs/archive/594a2b9ef55b0b1f139b67761a44ec62bb55ad3b.jpg">
+  <title>Koncolle</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <link rel="stylesheet" type="text/css" href="animate.css">
+  <var id="cnt" class="" style="display:none;">0</var>
+  <var id="min" class="" style="display:none;">0</var>
+
+</head>
+<body class="bg_hit bg_hit1" id="body">
+  <a href="https://zh.kcwiki.cn/wiki/%E8%88%B0%E5%A8%98%E7%99%BE%E7%A7%91" title="kcwiki" style="z-index:100; position: relative;">
+    <img src="Kancolle_logo.png" height="162" width="155" style="z-index:-1; position: relative;">
+  </a>
+  <div class="header_div">
+    <div style="transform: translate(0%, -105%); z-index:99; position: relative;">艦これ&ensp;&ensp;霧島</div>
+    <div style="transform: translate(0%, -800%); z-index:99; position: absolute; left:941px; bottom:272px;"> <font size="5">きりしま</font></div>
+    <span id="counter" class="" style="transform: translate(0%, -380%);">82</span>
+    <span id="health" class="" style="transform: translate(0%, -380%);">/82</span>
+  </div>
+
+  <audio src="peng.mp3" id="peng" autoplay=""></audio>
+  <audio src="https://uploads.kcwiki.cn/commons/9/9e/024-MedDmg.mp3" id="024-Sunk" autoplay=""></audio>
+  <audio src="https://uploads.kcwiki.cn/commons/8/8c/024-Sortie.mp3" id="024-Sortie" autoplay=""></audio>
+
+<script src="jq.js" type="text/javascript"></script>
+<script type="text/javascript">
+  $(function () {
+
+    $('#body').addClass('bg_hit5');
+    let num = localStorage.getItem('counter');
+    let cntt = localStorage.getItem('cnt');
+    let minn = localStorage.getItem('min');
+
+    if(num) {
+      $('#counter').text(num);
+      $('#cnt').text(cntt);
+    }
+    
+    $(document).on('keydown mousedown touchstart', function (e) {
+
+      if(isMobile()) {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }
+      
+      doKeyDown(e)
+    })
+    var lastTouchEnd = 0;
+    $(document).on('keyup mouseup touchend', function (e) {
+      if(isMobile()) {
+        let now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }
+      doKeyUp()
+    })
+  })
+
+  function aud(e){
+    let audio = new Audio('https://uploads.kcwiki.cn/commons/8/8c/024-Sortie.mp3')
+    audio.play()
+  }
+
+
+  let curNum = $('#counter').text()
+  let curCntt = $('#cnt').text()
+  let curMinn = $('#min').text()
+
+  function doKeyDown(e) {
+    
+    if(isMobile() && e.type == 'mousedown') {
+      return;
+    }
+    if(curNum == 82){
+      curNum = parseInt(curNum) - 1;
+      aud(e)
+      return;
+    }
+
+
+
+    
+    
+    if(curNum > 1 && curNum != 82){
+      curNum = parseInt(curNum) - 1;
+      if(curNum == 80 && curMinn > -1 && curMinn < 1){
+        curNum = parseInt(curNum) + 1;
+        curMinn = parseInt(curMinn) + 1;
+        $('#counter').text(curNum)
+        $('#min').text(curMinn)
+      }
+      let audio = new Audio('peng.mp3')
+      audio.play()
+      $('#body').addClass('bg_hit3');
+      $('#counter').text(curNum)
+      console.log(e);
+      animateCSS('#counter', 'pulse');
+      animateCSS('#cnt', 'pulse');
+    }
+    else if(curNum == 1){
+
+      if(curCntt > -1 && curCntt < 1){
+        curCntt = parseInt(curCntt) + 1;
+        alert("進擊注意!\nLv.99 - 霧島大破, 可能會被擊沉!");
+        return;
+      }
+      if(curCntt > 1){
+        return;
+      }
+      if(curCntt > 0 && curCntt < 2){
+        curCntt = parseInt(curCntt) + 1;
+        $('#body').removeClass('bg_hit2');
+        $('#body').addClass('bg_hit4');
+        alert("你以為我會讓你沈船嗎?");
+      }
+      
+    }
+    
+    if (curNum <= 41) {
+      $('#body').removeClass('bg_hit1');
+      $('#body').addClass('bg_hit2');
+    }
+    if(curNum == 41) {
+      let audio = new Audio('https://uploads.kcwiki.cn/commons/9/9e/024-MedDmg.mp3')
+      audio.play()
+    }
+  }
+
+  function doKeyUp() {
+    $('#body').removeClass('bg_hit3');
+    //$('#body').addClass('bg_hit2');
+  }
+
+  const animateCSS = (element, animation, prefix = 'animate__') =>
+    // We create a Promise and return it
+    new Promise((resolve, reject) => {
+      const animationName = `${prefix}${animation}`;
+      const node = document.querySelector(element);
+
+      node.classList.add(`${prefix}animated`, animationName);
+      // When the animation ends, we clean the classes and resolve the Promise
+      function handleAnimationEnd(event) {
+        event.stopPropagation();
+        node.classList.remove(`${prefix}animated`, animationName);
+        resolve('Animation ended');
+      }
+
+      node.addEventListener('animationend', handleAnimationEnd, {once: true});
+    });
+
+  function isMobile() {
+    var userAgentInfo = navigator.userAgent;
+
+    var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+
+    var mobile_flag = false;
+
+    for (var v = 0; v < mobileAgents.length; v++) {
+      if (userAgentInfo.indexOf(mobileAgents[v]) > 0) {
+        mobile_flag = true;
+        break;
+      }
+    }
+    var screen_width = window.screen.width;
+    var screen_height = window.screen.height;
+
+    if(screen_width < 500 && screen_height < 800){
+      mobile_flag = true;
+    }
+    return mobile_flag;
+  }
+
+  var newReportNum = 0;
+  setInterval(function () {
+    let remNum = newReportNum;
+    $.post('/x', {'x':newReportNum}, function (rep) {
+      $('#total_count').text(rep)
+      newReportNum -= remNum
+      let num = localStorage.getItem('counter');
+      if(!num) {
+        num = remNum
+      } else {
+        num = parseInt(num) + remNum
+      }
+      localStorage.setItem('counter', num);
+    })
+  }, 2000);
+</script>
+</body></html>
